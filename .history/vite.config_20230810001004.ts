@@ -32,6 +32,7 @@ function getPages() {
   return pages
 }
 
+console.log('getPages:',getPages())
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv): any => {
   const root = process.cwd(),

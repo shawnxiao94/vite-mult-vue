@@ -18,7 +18,7 @@ function getPages() {
 
   for (const folder of pageFolders) {
     const entry = resolve(pageDir, folder, 'main.ts')
-    const template = resolve(__dirname, `${folder}.html`) // 使用共享的 HTML 模板
+    const template = resolve(__dirname, 'index.html') // 使用共享的 HTML 模板
 
     if (fs.existsSync(entry)) {
       pages[folder] = {
@@ -32,6 +32,22 @@ function getPages() {
   return pages
 }
 
+// 获取 app1 页面的注入配置
+function getApp1Tags() {
+  return [
+    { tag: 'script', attrs: { src: '/app1-script.js' } },
+    { tag: 'link', attrs: { rel: 'stylesheet', href: '/app1-style.css' } },
+  ]
+}
+
+// 获取 app2 页面的注入配置
+function getApp2Tags() {
+  return [
+    { tag: 'script', attrs: { src: '/app2-script.js' } },
+    { tag: 'link', attrs: { rel: 'stylesheet', href: '/app2-style.css' } },
+  ]
+}
+console.log('getPages:',getPages())
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv): any => {
   const root = process.cwd(),
@@ -42,32 +58,22 @@ export default defineConfig(({ mode, command }: ConfigEnv): any => {
     base: "./",
     plugins: [
       vue(),
-      createHtmlPlugin({
-        minify: true,
-        pages: [
-          {
-            entry: 'src/pages/app1/main.ts',
-            filename: 'app1.html',
-            template: 'app1.html',
-            injectOptions: {
-              data: {
-                title: 'App1',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
+      htmlPlugin({
+        inject: {
+          // 这里定义不同页面的注入配置
+          include: ['app1', 'app2'], // 需要注入的页面
+          exclude: [], // 不需要注入的页面
+          tags() {
+            // 根据页面名称进行注入
+            if (this.html.includes('<!-- APP_SCRIPTS -->')) {
+              return getApp1Tags()
+            } else if (this.html.includes('<!-- APP_SCRIPTS -->')) {
+              return getApp2Tags()
+            }
+
+            return []
           },
-          {
-            entry: 'src/pages/app2/main.ts',
-            filename: 'app2.html',
-            template: 'app2.html',
-            injectOptions: {
-              data: {
-                title: 'App2',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
-          },
-        ],
+        },
       }),
       // styleImport({
       //   libs: [

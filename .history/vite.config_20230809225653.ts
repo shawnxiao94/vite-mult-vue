@@ -1,11 +1,16 @@
-
+/*
+ * @Author: shawnxiao 597035529@qq.com
+ * @Date: 2023-08-09 21:57:57
+ * @LastEditors: shawnxiao 597035529@qq.com
+ * @LastEditTime: 2023-08-09 22:55:36
+ * @FilePath: \vite-mult-vue\vite.config.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { defineConfig,ConfigEnv, loadEnv, UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import styleImport from "vite-plugin-style-import"
 import postCssPxToRem from "postcss-pxtorem"
 import { resolve } from 'path' // 编辑器提示 path 模块找不到，可以yarn add @types/node --dev
-import fs from 'fs'
-import {createHtmlPlugin } from 'vite-plugin-html'
 
 function getPages() {
   const pages = {}
@@ -18,7 +23,7 @@ function getPages() {
 
   for (const folder of pageFolders) {
     const entry = resolve(pageDir, folder, 'main.ts')
-    const template = resolve(__dirname, `${folder}.html`) // 使用共享的 HTML 模板
+    const template = resolve(__dirname, `a.html`) // 使用共享的 HTML 模板
 
     if (fs.existsSync(entry)) {
       pages[folder] = {
@@ -33,7 +38,7 @@ function getPages() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode, command }: ConfigEnv): any => {
+export default defineConfig(({ mode, command }: ConfigEnv): UserConfigExport => {
   const root = process.cwd(),
     env = loadEnv(mode, root),
     port = env.VITE_PORT ? Number(env.VITE_PORT) : 3366;
@@ -42,48 +47,16 @@ export default defineConfig(({ mode, command }: ConfigEnv): any => {
     base: "./",
     plugins: [
       vue(),
-      createHtmlPlugin({
-        minify: true,
-        pages: [
+      styleImport({
+        libs: [
           {
-            entry: 'src/pages/app1/main.ts',
-            filename: 'app1.html',
-            template: 'app1.html',
-            injectOptions: {
-              data: {
-                title: 'App1',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
-          },
-          {
-            entry: 'src/pages/app2/main.ts',
-            filename: 'app2.html',
-            template: 'app2.html',
-            injectOptions: {
-              data: {
-                title: 'App2',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
+            libraryName: "vant",
+            esModule: true,
+            resolveStyle: (name) => `vant/es/${name}/style`,
           },
         ],
       }),
-      // styleImport({
-      //   libs: [
-      //     {
-      //       libraryName: "vant",
-      //       esModule: true,
-      //       resolveStyle: (name) => `vant/es/${name}/style`,
-      //     },
-      //   ],
-      // }),
     ],
-    build: {
-      rollupOptions: {
-        input: getPages(),
-      },
-    },
     css: {
       postcss: {
         plugins: [

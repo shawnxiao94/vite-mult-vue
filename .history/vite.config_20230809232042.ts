@@ -5,7 +5,6 @@ import styleImport from "vite-plugin-style-import"
 import postCssPxToRem from "postcss-pxtorem"
 import { resolve } from 'path' // 编辑器提示 path 模块找不到，可以yarn add @types/node --dev
 import fs from 'fs'
-import {createHtmlPlugin } from 'vite-plugin-html'
 
 function getPages() {
   const pages = {}
@@ -18,7 +17,7 @@ function getPages() {
 
   for (const folder of pageFolders) {
     const entry = resolve(pageDir, folder, 'main.ts')
-    const template = resolve(__dirname, `${folder}.html`) // 使用共享的 HTML 模板
+    const template = resolve(__dirname, 'index.html') // 使用共享的 HTML 模板
 
     if (fs.existsSync(entry)) {
       pages[folder] = {
@@ -31,7 +30,7 @@ function getPages() {
 
   return pages
 }
-
+console.log('getPages:',getPages())
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv): any => {
   const root = process.cwd(),
@@ -42,33 +41,6 @@ export default defineConfig(({ mode, command }: ConfigEnv): any => {
     base: "./",
     plugins: [
       vue(),
-      createHtmlPlugin({
-        minify: true,
-        pages: [
-          {
-            entry: 'src/pages/app1/main.ts',
-            filename: 'app1.html',
-            template: 'app1.html',
-            injectOptions: {
-              data: {
-                title: 'App1',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
-          },
-          {
-            entry: 'src/pages/app2/main.ts',
-            filename: 'app2.html',
-            template: 'app2.html',
-            injectOptions: {
-              data: {
-                title: 'App2',
-                injectScript: `<script src="./inject.js"></script>`,
-              },
-            },
-          },
-        ],
-      }),
       // styleImport({
       //   libs: [
       //     {

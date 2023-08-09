@@ -32,6 +32,7 @@ function getPages() {
   return pages
 }
 
+console.log('getPages:',getPages())
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv): any => {
   const root = process.cwd(),
@@ -48,7 +49,7 @@ export default defineConfig(({ mode, command }: ConfigEnv): any => {
           {
             entry: 'src/pages/app1/main.ts',
             filename: 'app1.html',
-            template: 'app1.html',
+            template: 'index.html',
             injectOptions: {
               data: {
                 title: 'App1',
@@ -59,7 +60,7 @@ export default defineConfig(({ mode, command }: ConfigEnv): any => {
           {
             entry: 'src/pages/app2/main.ts',
             filename: 'app2.html',
-            template: 'app2.html',
+            template: 'index.html',
             injectOptions: {
               data: {
                 title: 'App2',
